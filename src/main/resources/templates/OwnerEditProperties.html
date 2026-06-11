@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>My Properties</title>
+
+        <!-- Bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Icons -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <div th:replace="~{owner_fragments :: owner_links}"></div>
+
+    <style>
+        body {
+            background: #f5f7fb;
+        }
+
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .property-card {
+            border-radius: 16px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            transition: 0.3s ease;
+        }
+
+        .property-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .property-img {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        .badge-custom {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #28a745;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .favorite-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #fff;
+            padding: 6px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .property-body {
+            padding: 15px;
+        }
+
+        .property-title {
+            font-weight: 600;
+        }
+
+        .property-price {
+            color: #f0657d;
+            font-weight: bold;
+        }
+
+        .property-meta {
+            font-size: 13px;
+            color: #777;
+        }
+
+        .meta-icons i {
+            margin-right: 5px;
+        }
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+
+            backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.4);
+
+            display: none;
+            justify-content: center;
+            align-items: center;
+
+            z-index: 999;
+        }
+
+        .modal-box {
+            background: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            width: 700px;
+            animation: zoomIn 0.3s ease;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .custom-swal-btn{
+            background:#ff385c !important;
+
+            color:white !important;
+
+            border:none !important;
+
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            width:160px;
+
+            height:55px;
+
+            border-radius:14px;
+
+            font-size:20px;
+
+            font-weight:600;
+
+            transition:0.3s;
+        }
+
+        .custom-swal-btn:hover{
+            background:#ff2d55 !important;
+
+            transform:scale(1.1);
+        }
+
+        .custom-swal-btn:active{
+            opacity: 0.5;
+        }
+
+        .custom-swal-btn:focus{
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            border:none !important;
+        }
+
+        .custom-cancel-btn{
+
+            background:#ff2d55 !important;
+
+            color:white !important;
+
+            border:none !important;
+
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            width:160px;
+
+            margin-left: 25px;
+
+            height:55px;
+
+            border-radius:14px;
+
+            font-size:18px;
+
+            font-weight:600;
+
+            margin-right:12px;
+
+            transition:0.3s;
+        }
+
+        .custom-cancel-btn:hover{
+            transform: scale(1.1);
+            background:#ff2d55 !important;
+            opacity: 0.3;
+        }
+    </style>
+
+    <script>
+        function showProperties() {
+
+            const url = "ShowProperty2";   // 🔥 correct API
+
+            fetch(url)
+                    .then(response => response.text())
+                    .then(ans => {
+
+                        console.log(ans);
+
+                        const data = JSON.parse(ans).ans;
+
+                        let s = ``;
+
+                        s += `<div class="container py-5">
+                            <h2 class="section-title">My Properties</h2>
+                            <div class="row g-4">`;
+
+                        if (data.length === 0) {
+                            s += `
+                                <tr>
+                                    <td colspan="13" class="text-center fw-bold">
+                                        <h3 class="heading">No Properties Available</h3>
+                                    </td>
+                                </tr>
+                                `;
+                        } else {
+                            for (let i = 0; i < data.length; i++) {
+
+                                const obj = data[i];
+
+                                s += `
+                                    <div class="col-md-4">
+                                        <div class="property-card" style="cursor: pointer;" onclick='openModal(${JSON.stringify(obj)})'>
+
+                                            <div class="position-relative">
+                                                <img src="${obj.photo}" class="property-img">
+
+                                                <span class="badge-custom">${obj.status}</span>
+                                                <span class="favorite-icon"><i class="bi bi-heart"></i></span>
+                                            </div>
+
+                                            <div class="property-body">
+                                                <div class="property-title">${obj.property_name}</div>
+                                                <div class="property-meta">${obj.cityname}</div>
+
+                                                <div class="property-price mt-2">₹${obj.price}</div>
+                                            </div>
+
+                                        </div>
+                                    </div>`;
+                            }
+                            s += `</div></div>`;
+                        }
+
+                        document.getElementById("div1").innerHTML = s;
+                    });
+        }
+
+        function openModal(obj) {
+
+            document.getElementById("modal_id").value = obj.id;
+            document.getElementById("modal_Owner_email").value = obj.owner_email;
+            document.getElementById("modal_pt").value = obj.property_type;
+//            document.getElementById("modal_name").value = obj.name;
+            document.getElementById("modal_price").value = obj.price;
+            document.getElementById("modal_op").value = obj.offer_price;
+            document.getElementById("modal_desc").value = obj.description;
+            document.getElementById("modal_add").value = obj.address;
+            document.getElementById("modal_city").value = obj.cityid;
+            document.getElementById("modal_pn").value = obj.propertyname;
+            document.getElementById("modal_status").value = obj.status;
+            document.getElementById("modal_ltd").value = obj.latitude;
+            document.getElementById("modal_longi").value = obj.longitude;
+            document.getElementById("upbtn").value = obj.id;
+
+            document.getElementById("editModal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("editModal").style.display = "none";
+        }
+
+        window.onclick = function (e) {
+            const modal = document.getElementById("editModal");
+            if (e.target === modal) {
+                modal.style.display = "none";
+            }
+        };
+
+        function updateProperty() {
+            const id = document.getElementById("upbtn").value;
+            Swal.fire({
+
+                title: 'Update Property?',
+
+                text: 'Do you want to save these changes?',
+
+                icon: 'warning',
+
+                showCancelButton: true,
+
+                confirmButtonText: 'Update',
+
+                cancelButtonText: 'Cancel',
+
+                customClass: {
+                    confirmButton: 'custom-swal-btn',
+                    cancelButton: 'custom-cancel-btn'
+                },
+
+                buttonsStyling: false,
+
+                focusConfirm: false
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const price = document.getElementById("modal_price").value;
+                    const op = document.getElementById("modal_op").value;
+                    const desc = document.getElementById("modal_desc").value;
+                    const add = document.getElementById("modal_add").value;
+                    const pn = document.getElementById("modal_pn").value;
+                    const latitude = document.getElementById("modal_ltd").value;
+                    const longitude = document.getElementById("modal_longi").value;
+//                    const status = document.getElementById("modal_status").value;
+
+
+                    const formData = new FormData();
+                    formData.append("price", price);
+                    formData.append("op", op);
+                    formData.append("desc", desc);
+                    formData.append("pn", pn);
+                    formData.append("add", add);
+//                    formData.append("status", status);
+                    formData.append("longitude", longitude);
+                    formData.append("latitude", latitude);
+                    formData.append("id", id);
+
+
+                    const url = `/updateproperty`;
+                    fetch(url, {method: "POST", body: formData})
+                            .then(response => response.text())
+                            .then(ans => {
+                                if (ans === "1") {
+                                    Swal.fire({
+
+                                        icon: 'success',
+
+                                        title: 'Updated Successfully!',
+
+                                        text: 'Property has been updated.',
+
+                                        timer: 1600,
+
+                                        showConfirmButton: false
+
+                                    }).then(() => {
+                                        showProperties();
+                                    });
+                                }
+
+
+
+                            });
+                }
+            });
+
+
+        }
+
+        function confirmOwnerLogout(event) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: 'Are you Sure?',
+                text: 'You want to logout?',
+                icon: 'warning',
+
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                confirmButtonColor: '#ff385c',
+
+                customClass: {
+                    confirmButton: 'custom-swal-btn',
+                    cancelButton: 'custom-cancel-btn'
+                }
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/PropertyOwnerLogout";
+                }
+            });
+            return false;
+        }
+    </script>
+</head>
+
+<body onload="showProperties()">
+
+    <!-- Header Fragment -->
+    <div th:replace="~{owner_fragments::owner_header}"></div>
+    <!-- END nav -->
+
+    <div id="div1"></div>
+
+    <div th:replace="~{owner_fragments::owner_footer}"></div>
+
+    <!-- loader -->
+    <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+    <!-- Script Fragment -->
+    <div th:replace="~{owner_fragments::owner_script}"></div>
+
+
+    <div id="editModal" class="custom-modal">
+
+        <div class="modal-box">
+
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+
+            <h4>Edit Property</h4>
+
+            <input type="hidden" id="modal_id">
+            <div class="row">
+                <div class="col-md-6">
+                    <div>
+                        <label class="form-label" for="modal_Owner_email">Owner Email</label>
+                        <input type="text" id="modal_Owner_email" class="form-control mb-2" readonly>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div>
+                        <label class="form-label" for="modal_pt">Property Type</label>
+                        <input type="number" id="modal_pt" class="form-control mb-2">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div>
+                        <label class="form-label" for="modal_price">Property Price</label>
+                        <input type="number" id="modal_price" class="form-control mb-2">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div>
+                        <label class="form-label" for="modal_op">Property Offer Price</label>
+                        <input type="text" id="modal_op" class="form-control mb-2">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div>
+                        <label class="form-label" for="modal_city">Property City</label>
+                        <input type="text" id="modal_city" class="form-control mb-2" readonly >
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div>
+                        <label class="form-label" for="modal_desc">Property Description</label>
+                        <textarea id="modal_desc" class="form-control mb-2"></textarea>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div>
+                        <label class="form-label" for="modal_add">Property Address</label>
+                        <input type="text" id="modal_add" class="form-control mb-2">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div>
+                        <label class="form-label" for="modal_pn">Property Name</label>
+                        <input type="text" id="modal_pn" class="form-control mb-2">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div>
+                        <label class="form-label" for="modal_ltd">Latitude</label>
+                        <input type="number" id="modal_ltd" class="form-control mb-2">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div>
+                        <label class="form-label" for="modal_longi">Longitude</label>
+                        <input type="number" id="modal_longi" class="form-control mb-2">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div>
+                        <label class="form-label" for="modal_status">Property Status</label>
+                        <input type="text" id="modal_status" class="form-control mb-2" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!--<input type="button" class="btn btn-primary w-100" id="upbtn" value="Update" onclick="updateProperty()"/>-->
+            <button type="button" class="btn btn-primary w-100" id="upbtn" value="" onclick="updateProperty()">Update</button>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

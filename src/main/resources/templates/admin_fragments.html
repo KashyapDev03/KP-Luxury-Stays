@@ -1,0 +1,362 @@
+<div th:fragment="admin_header">
+    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+        <div class="container">
+            <a class="navbar-brand" href="#">Vacation<span>Rental</span></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="fa fa-bars"></span> Menu
+            </button>
+            <div class="collapse navbar-collapse" id="ftco-nav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="services.html" class="nav-link">Services</a></li>
+                    <!--<li class="nav-item"><a href="rooms.html" class="nav-link">Apartment Room</a></li>-->
+                    <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
+                    <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+                    <!--<li class="nav-item"><a href="#" th:if="${showLogout}" class="nav-link" onclick="confirmAdminLogout()"><i class="fa fa-sign-out"></i></a></li>-->
+
+                    <th:block th:if="${admin_email == null}">
+                        <li class="nav-item dropdown mx-2">
+
+                            <a class="nav-link custom-drop dropdown-toggle"
+                               href="#"
+                               id="userDropdown"
+                               role="button"
+                               data-toggle="dropdown">
+
+                                <i class="fa fa-user-circle mr-1"></i>
+                                User
+
+                            </a>
+
+                            <div class="dropdown-menu custom-menu">
+
+                                <a class="dropdown-item" href="/UserLogin">
+
+                                    <i class="fa fa-sign-in mr-2"></i>
+
+                                    Login
+
+                                </a>
+
+                                <a class="dropdown-item" href="/UserSignup">
+
+                                    <i class="fa fa-user-plus mr-2"></i>
+
+                                    Signup
+
+                                </a>
+
+                            </div>
+
+                        </li>
+
+                        <!-- OWNER -->
+                        <li class="nav-item dropdown mx-2">
+
+                            <a class="nav-link custom-drop dropdown-toggle"
+                               href="#"
+                               id="ownerDropdown"
+                               role="button"
+                               data-toggle="dropdown">
+
+                                <i class="fa fa-home mr-1"></i>
+                                Owner
+
+                            </a>
+
+                            <div class="dropdown-menu custom-menu">
+
+                                <a class="dropdown-item" href="/PropertyOwnerLogin">
+
+                                    <i class="fa fa-sign-in mr-2"></i>
+
+                                    Login
+
+                                </a>
+
+                                <a class="dropdown-item" href="/PropertyOwnerSignup">
+
+                                    <i class="fa fa-user-plus mr-2"></i>
+
+                                    Signup
+
+                                </a>
+
+                            </div>
+
+                        </li>
+                    </th:block>
+
+                    <th:block th:if="${admin_email != null}">
+                        <li class="nav-item dropdown mx-2">
+
+                            <a class="nav-link custom-drop dropdown-toggle"
+                               href="#"
+                               id="loggedUserDropdown"
+                               role="button"
+                               data-toggle="dropdown">
+
+                                <i class="fa fa-user-circle mr-1"></i>
+
+                                <span th:text="${admin_email}"></span>
+
+                            </a>
+
+                            <div class="dropdown-menu custom-menu">
+
+                                <a class="dropdown-item"
+                                   href="AdminLogout"
+                                   onclick="return confirmAdminLogout(event)">
+
+                                    <i class="fa fa-sign-out mr-2"></i>
+
+                                    Logout
+
+                                </a>
+
+                            </div>
+
+                        </li>
+
+                    </th:block>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+
+
+<div th:fragment="admin_footer">
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-lg-3 mb-md-0 mb-4">
+                    <h2 class="footer-heading"><a href="#" class="logo">Vacation Rental</a></h2>
+                    <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+                    <a href="#">Read more <span class="fa fa-chevron-right" style="font-size: 11px;"></span></a>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-md-0 mb-4">
+                    <h2 class="footer-heading">Services</h2>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="py-1 d-block">Map Direction</a></li>
+                        <li><a href="#" class="py-1 d-block">Accomodation Services</a></li>
+                        <li><a href="#" class="py-1 d-block">Great Experience</a></li>
+                        <li><a href="#" class="py-1 d-block">Perfect central location</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-md-0 mb-4">
+                    <h2 class="footer-heading">Tag cloud</h2>
+                    <div class="tagcloud">
+                        <a href="#" class="tag-cloud-link">apartment</a>
+                        <a href="#" class="tag-cloud-link">home</a>
+                        <a href="#" class="tag-cloud-link">vacation</a>
+                        <a href="#" class="tag-cloud-link">rental</a>
+                        <a href="#" class="tag-cloud-link">rent</a>
+                        <a href="#" class="tag-cloud-link">house</a>
+                        <a href="#" class="tag-cloud-link">place</a>
+                        <a href="#" class="tag-cloud-link">drinks</a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-md-0 mb-4">
+                    <h2 class="footer-heading">Subcribe</h2>
+                    <form action="#" class="subscribe-form">
+                        <div class="form-group d-flex">
+                            <input type="text" class="form-control rounded-left" placeholder="Enter email address">
+                            <button type="submit" class="form-control submit rounded-right"><span class="sr-only">Submit</span><i class="fa fa-paper-plane"></i></button>
+                        </div>
+                    </form>
+                    <h2 class="footer-heading mt-5">Follow us</h2>
+                    <ul class="ftco-footer-social p-0">
+                        <li class="ftco-animate"><a href="#" data-toggle="tooltip" data-placement="top" title="Twitter"><span class="fa fa-twitter"></span></a></li>
+                        <li class="ftco-animate"><a href="#" data-toggle="tooltip" data-placement="top" title="Facebook"><span class="fa fa-facebook"></span></a></li>
+                        <li class="ftco-animate"><a href="#" data-toggle="tooltip" data-placement="top" title="Instagram"><span class="fa fa-instagram"></span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="w-100 mt-5 border-top py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 col-lg-8">
+
+                        <p class="copyright mb-0"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                            Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib.com</a>
+                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+                    </div>
+                    <div class="col-md-6 col-lg-4 text-md-right">
+                        <p class="mb-0 list-unstyled">
+                            <a class="mr-md-3" href="#">Terms</a>
+                            <a class="mr-md-3" href="#">Privacy</a>
+                            <a class="mr-md-3" href="#">Compliances</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<div th:fragment="admin_script">
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery-migrate-3.0.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.easing.1.3.js"></script>
+    <script src="js/jquery.waypoints.min.js"></script>
+    <script src="js/jquery.stellar.min.js"></script>
+    <script src="js/jquery.animateNumber.min.js"></script>
+    <script src="js/bootstrap-datepicker.js"></script>
+    <script src="js/jquery.timepicker.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/scrollax.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+    <script src="js/google-map.js"></script>
+    <script src="js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</div>
+
+<div th:fragment="admin_links">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,500,500i,600,600i,700,700i&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="css/animate.css">
+
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+
+    <link rel="stylesheet" href="css/bootstrap-datepicker.css">
+    <link rel="stylesheet" href="css/jquery.timepicker.css">
+
+    <link rel="stylesheet" href="css/flaticon.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .dropdown-menu{
+
+            margin-top:12px;
+        }
+        .ftco-navbar-light .dropdown:hover .dropdown-menu{
+
+            display:none;
+        }
+
+        .ftco-navbar-light .dropdown.show .dropdown-menu{
+
+            display:block;
+        }
+        .navbar{
+
+            overflow: visible !important;
+        }
+
+        .navbar-nav{
+
+            align-items: center;
+        }
+
+        .nav-item.dropdown{
+
+            position: relative;
+        }
+
+        .custom-drop{
+
+            background:#fff5f7;
+
+            border-radius:30px;
+
+            padding:10px 20px !important;
+
+            transition:0.3s;
+
+            font-weight:500;
+
+            margin-left:8px;
+
+            color:#333 !important;
+        }
+
+        .custom-drop:hover{
+
+            background:#ff385c;
+
+            color:white !important;
+        }
+
+        .custom-drop::after{
+
+            margin-left:8px;
+        }
+
+        .custom-menu{
+
+            border:none;
+
+            border-radius:16px;
+
+            padding:10px;
+
+            margin-top:12px;
+
+            min-width:190px;
+
+            box-shadow:0 10px 30px rgba(0,0,0,0.12);
+        }
+
+        .custom-menu .dropdown-item{
+
+            border-radius:10px;
+
+            padding:10px 16px;
+
+            transition:0.3s;
+
+            font-weight:500;
+
+            color:#333;
+        }
+
+        .custom-menu .dropdown-item:hover{
+
+            background:#ff385c;
+
+            color:white;
+        }
+
+        /*------------------------------*/
+
+        .nav-item.dropdown:hover .dropdown-menu{
+
+            display:block;
+
+            margin-top:12px;
+
+            opacity:1;
+
+            visibility:visible;
+
+            transform:translateY(0);
+        }
+
+        .custom-menu{
+
+            display:block;
+
+            opacity:0;
+
+            visibility:hidden;
+
+            transform:translateY(10px);
+
+            transition:0.3s ease;
+        }
+    </style>
+</div>

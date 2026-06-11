@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Property Details</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <div th:replace="~{user_fragments :: user_links}"></div>
+
+
+    <style>
+
+        body{
+            background:#fff;
+            font-family: 'Poppins', sans-serif;
+            color:#222;
+        }
+
+        .main-container{
+            width:90%;
+            margin:auto;
+            padding-top:40px;
+        }
+
+        .property-title{
+            font-size:38px;
+            font-weight:700;
+        }
+
+        .property-subtitle{
+            font-size:15px;
+            color:#666;
+        }
+
+        .gallery{
+            margin-top:25px;
+        }
+
+        .main-image img{
+            width:100%;
+            height:500px;
+            object-fit:cover;
+            border-radius:18px;
+        }
+
+        .side-gallery{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:8px;
+        }
+
+        .side-gallery img{
+            width:100%;
+            height:246px;
+            object-fit:cover;
+        }
+
+        .top-right{
+            border-radius:0 18px 0 0;
+        }
+
+        .bottom-right{
+            border-radius:0 0 18px 0;
+        }
+
+        .host-section{
+            margin-top:40px;
+            border-bottom:1px solid #eee;
+            padding-bottom:25px;
+        }
+
+        .host-img{
+            width:60px;
+            height:60px;
+            border-radius:50%;
+            object-fit:cover;
+        }
+
+        .feature-box{
+            display:flex;
+            gap:15px;
+            margin-top:25px;
+        }
+
+        .feature-icon{
+            font-size:25px;
+            color:#ff385c;
+        }
+
+        .feature-title{
+            font-weight:600;
+        }
+
+        .booking-card{
+            border:1px solid #eee;
+            border-radius:18px;
+            padding:25px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.08);
+            position:sticky;
+            top:20px;
+        }
+
+        .price{
+            font-size:30px;
+            font-weight:700;
+        }
+
+        .reserve-btn{
+            background:#ff385c;
+            border:none;
+            color:white;
+            width:100%;
+            padding:14px;
+            border-radius:12px;
+            font-weight:600;
+            margin-top:20px;
+            transition:0.3s;
+        }
+
+        .reserve-btn:hover{
+            background:#e11d48;
+        }
+
+        .amenities{
+            margin-top:40px;
+        }
+
+        .amenity{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin-bottom:20px;
+        }
+
+        .amenity i{
+            font-size:22px;
+            color:#ff385c;
+        }
+
+        .map-box{
+            margin-top:50px;
+        }
+
+        iframe{
+            border-radius:20px;
+            width:100%;
+            height:350px;
+        }
+
+        .section-title{
+            font-size:28px;
+            font-weight:700;
+            margin-bottom:25px;
+        }
+
+        .review-badge{
+            color:#ff385c;
+            font-weight:600;
+        }
+
+        .old-price{
+            text-decoration: line-through;
+            color: gray;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .new-price{
+            color: #ff2d55;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .side-gallery{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:10px;
+            height:500px;
+        }
+
+        .side-gallery img{
+            width:100%;
+            height:245px;
+            object-fit:cover;
+            border-radius:16px;
+        }
+
+        .more-photos{
+            position:relative;
+        }
+
+        .more-photos img{
+            width:100%;
+            height:245px;
+            object-fit:cover;
+            border-radius:16px;
+        }
+
+        .overlay{
+            position:absolute;
+            top:0;
+            left:0;
+
+            width:100%;
+            height:100%;
+
+            background:rgba(0,0,0,0.45);
+
+            color:white;
+
+            display:flex;
+            justify-content:center;
+            align-items:center;
+
+            font-size:28px;
+            font-weight:700;
+
+            border-radius:16px;
+
+            backdrop-filter:blur(2px);
+        }
+
+        .gallery-modal{
+            position:fixed;
+            top:0;
+            left:0;
+
+            width:100%;
+            height:100%;
+
+            background:rgba(0,0,0,0.92);
+
+            z-index:9999;
+
+            display:none;
+
+            overflow-y:auto;
+
+            padding:40px;
+        }
+
+        .gallery-content{
+            display:grid;
+
+            grid-template-columns:repeat(auto-fit,minmax(350px,1fr));
+
+            gap:20px;
+        }
+
+        .gallery-content img{
+            width:100%;
+            height:300px;
+
+            object-fit:cover;
+
+            border-radius:18px;
+
+            transition:0.3s;
+        }
+
+        .gallery-content img:hover{
+            transform:scale(1.09);
+        }
+
+        .close-btn{
+            position:fixed;
+
+            top:20px;
+            right:35px;
+
+            font-size:50px;
+
+            color:white;
+
+            cursor:pointer;
+
+            z-index:10000;
+        }
+
+        .main-image img,
+        .side-gallery img{
+            transition:0.3s;
+            cursor:pointer;
+        }
+
+        .main-image img:hover,
+        .side-gallery img:hover{
+            transform:scale(1.1);
+            opacity:0.95;
+        }
+
+        .custom-swal-btn{
+            background:#ff385c !important;
+
+            color:white !important;
+
+            border:none !important;
+
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            width:160px;
+
+            height:55px;
+
+            border-radius:14px;
+
+            font-size:20px;
+
+            font-weight:600;
+
+            transition:0.3s;
+        }
+
+        .custom-swal-btn:hover{
+            background:#ff2d55 !important;
+
+            transform:scale(1.1);
+        }
+
+        .custom-swal-btn:active{
+            opacity: 0.5;
+        }
+
+        .custom-swal-btn:focus{
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            border:none !important;
+        }
+
+        .custom-cancel-btn{
+
+            background:#ff2d55 !important;
+
+            color:white !important;
+
+            border:none !important;
+
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            width:160px;
+
+            margin-left: 25px;
+
+            height:55px;
+
+            border-radius:14px;
+
+            font-size:18px;
+
+            font-weight:600;
+
+            margin-right:12px;
+
+            transition:0.3s;
+        }
+
+        .custom-cancel-btn:hover{
+            transform: scale(1.1);
+            background:#ff2d55 !important;
+            opacity: 0.3;
+        }
+
+    </style>
+
+    <script>
+        function getPropertyId() {
+            const params = new URLSearchParams(window.location.search);
+
+            const propertyid = params.get("id");
+            return propertyid;
+        }
+
+        function getcityId() {
+            const params = new URLSearchParams(window.location.search);
+
+            const cityid = params.get("cityid");
+            return cityid;
+        }
+
+        function showlocation() {
+            const cityid = getcityId();
+//            console.log("CITY ID -----------------> ", cityid);
+            const url = `showlocation?cityid=${cityid}`;
+
+            fetch(url).then(response => response.text()).then(ans => {
+                console.log(ans);
+
+                const data = JSON.parse(ans).ans;
+
+                console.log(data);
+
+                let s = ``;
+
+                for (let i = 0; i < data.length; i++) {
+                    const obj = data[i];
+
+                    s += `${obj.cityname}, ${obj.statename}, ${obj.countryname}`;
+                }
+
+                document.getElementById("location").innerText = s;
+            });
+        }
+
+//        function getPropertyId(callback) {
+//            const cityid = getcityId();
+//
+//            const url = `showproperty?cityid=${cityid}`;
+//            fetch(url).then(response => response.text()).then(ans => {
+//                const data = JSON.parse(ans).ans;
+//                console.log("GetPropertyId --------> ", data);
+//
+//                let s = ``;
+//
+//                for (let i = 0; i < data.length; i++) {
+//                    const obj = data[i];
+//
+//                    s += `${obj.id}`;
+//                }
+////                console.log("Property Id --------------->", s);
+//                callback(s);
+//            });
+//        }
+
+//        getPropertyId(function (result) {
+//
+//            console.log("Property Id: --------------> ", result);
+//
+//        });
+
+        function showpropertyname() {
+            const propertyId = getPropertyId();
+//            console.log("Show Property Name: ===========> ", propertyId);
+
+            const url = `showtext?pid=${propertyId}`;
+
+            fetch(url)
+                    .then(response => response.text())
+                    .then(ans => {
+
+//                        console.log("Show Property Name ---------------------> ", ans);
+
+                        const data = JSON.parse(ans).ans;
+                        console.log(data);
+
+                        let pn = `${data[0].property_name}`;
+//                            let pPhoto = `${data[0].propertyphoto}`;
+                        let pdesc = `${data[0].description}`;
+
+                        document.getElementById("propertyname").innerText = pn;
+//                            document.getElementById("img1").src = pPhoto;
+                        document.getElementById("desc").innerText = pdesc;
+                    });
+        }
+
+        function showPropertyPrice() {
+            const propertyId = getPropertyId();
+
+            const url = `getPropertyPrice?pid=${propertyId}`;
+
+            fetch(url).then(response => response.text()).then(ans => {
+                const data = JSON.parse(ans).ans;
+//                    console.log("Show Property Price ---------> ", data);
+
+                let oldPrice = `${data[0].price}`;
+                let newPrice = `${data[0].offer_price}`;
+
+                document.getElementById("oldPrice").innerHTML = "&#8377;" + oldPrice;
+                document.getElementById("newPrice").innerHTML = "&#8377;" + newPrice;
+            });
+
+        }
+
+        function showMap() {
+            const propertyid = getPropertyId();
+
+            const url = `showMap?propertyId=${propertyid}`;
+            console.log("Show Map -------------------> ", propertyid);
+            fetch(url).then(response => response.text()).then(ans => {
+                console.log("Show Map --------> ", ans);
+                const data = JSON.parse(ans).ans;
+
+                const latitude = `${data[0].latitude}`;
+                const longitude = `${data[0].longitude}`;
+
+                let s = `
+                            <h3 class="section-title">Where you'll be</h3>
+
+                            <iframe
+                                src="https://maps.google.com/maps?q=${latitude},${longitude}&t=&z=13&ie=UTF8&iwloc=&output=embed">
+                            </iframe>`;
+
+                document.getElementById("map-box").innerHTML = s;
+            });
+        }
+
+        function showPropertyPhotos() {
+            const propertyId = getPropertyId();
+
+            const formData = new FormData();
+
+            formData.append("propertyId", propertyId);
+
+            fetch("showPropertyPhotos", {
+                method: "POST",
+                body: formData
+            })
+                    .then(response => response.text())
+                    .then(ans => {
+
+                        const data = JSON.parse(ans).ans;
+                        console.log("Property Photos --------------------> ", data);
+
+                        // MAIN IMAGE
+                        if (data.length > 0) {
+
+                            document.getElementById("img1").src =
+                                    "/" + data[0].photo;
+                        }
+
+                        let s = "";
+
+                        // ONLY SHOW 4 SIDE IMAGES
+                        for (let i = 1; i <= 4 && i < data.length; i++) {
+                            if (i === 4 && data.length > 5) {
+
+                                let remaining = data.length - 5;
+
+                                s += `
+                                    <div class="more-photos"
+                                         onclick='openGallery(${JSON.stringify(data)})'>
+
+                                        <img src="/${data[i].photo}">
+
+                                        <div class="overlay">
+                                            +${remaining} more
+                                        </div>
+
+                                    </div>`;
+                            } else {
+                                s += `
+                                        <img src="/${data[i].photo}">`;
+                            }
+                        }
+                        document.getElementById("side-gallery").innerHTML = s;
+                    });
+        }
+
+        function openGallery(data) {
+
+            let s = "";
+
+            for (let i = 0; i < data.length; i++) {
+
+                s += `
+            <img src="/${data[i].photo}">
+        `;
+            }
+
+            document.getElementById("gallery-content").innerHTML = s;
+
+            document.getElementById("galleryModal").style.display = "block";
+        }
+
+        function closeGallery() {
+
+            document.getElementById("galleryModal").style.display = "none";
+        }
+
+//        function payment() {
+//            getPropertyId(function (detail_id) {
+//
+//
+//                const startDate = document.getElementById("startDate").value;
+//                const endDate = document.getElementById("endDate").value;
+//
+//                if (startDate === "" || endDate === "") {
+//                    Swal.fire({
+//                        icon: 'warning',
+//                        title: 'Select Dates',
+//                        text: 'Please select start and end dates',
+//
+//                        showConfirmButton: false
+//                    });
+//                    return;
+//                }
+//
+//                const start = new Date(startDate);
+//                const end = new Date(endDate);
+//
+//                const diffTime = end.getTime() - start.getTime();
+//                const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+//
+//                if (days <= 0) {
+//                    Swal.fire({
+//                        icon: 'error',
+//                        title: 'Invalid Dates',
+//                        text: 'Checkout date must be after check-in date.',
+//                        showConfirmButton: false
+//                    });
+//                    return;
+//                }
+//
+//                // GET OFFER PRICE FROM UI
+//                let offerPrice =
+//                        document.getElementById("newPrice")
+//                        .innerText
+//                        .replace("₹", "");
+//
+//                offerPrice = parseInt(offerPrice);
+//
+//                let total_price = days * offerPrice;
+//
+//                console.log("Property ID: ----------------> ", detail_id);
+//
+//                console.log("Offer Price:-----------------> ", offerPrice);
+//
+//                console.log("Total Price:-----------------> ", total_price);
+//
+//                const formData = new FormData();
+//                formData.append("detail_id", detail_id);
+//                formData.append("total_price", total_price);
+//                formData.append("startDate", startDate);
+//                formData.append("endDate", endDate);
+//
+//
+//
+//                const url = `payment`;
+//                fetch(url, {method: "POST", body: formData}).then(response => response.text()).then(ans => {
+//                    console.log(ans);
+//
+//                    document.getElementById("bifercation").innerText = offerPrice + " X " + days;
+//                    document.getElementById("total_price").innerText = "₹" + total_price;
+//
+//                    //Cleaning Fees (2% of Total)
+//                    let cleaningFee = (2 * total_price) / 100;
+//                    document.getElementById("cleaning_label").innerText = "Cleaning Fees (2% of Total) ";
+//                    document.getElementById("cleaning_fee").innerText = "₹" + cleaningFee;
+//
+//                    //Service Fee (2% of Total)
+//                    let serviceFee = (2 * total_price) / 100;
+//                    document.getElementById("service_label").innerText = "Service Fees (2% of Total) ";
+//                    document.getElementById("service_fee").innerText = "₹" + serviceFee;
+//
+//                    //Final Total
+//                    const finalTotal = total_price + cleaningFee + serviceFee;
+//                    document.getElementById("final_total_label").innerText = "Total";
+//                    document.getElementById("final_total").innerText = "₹" + finalTotal;
+//
+//                    if (ans === "0") {
+//                        Swal.fire({
+//                            icon: 'error',
+//                            text: 'User Login Required!',
+//
+//                            timer: 1600,
+//                            showConfirmButton: false
+//                        });
+//                    }
+//
+//                    if (ans === "1") {
+//                        const formattedStart = formatDate(startDate);
+//                        const formattedEnd = formatDate(endDate);
+//
+//                        window.location.href =
+//                                "/paymentPage?detail_id=" + detail_id +
+//                                "&grand=" + finalTotal +
+//                                "&start=" + formattedStart +
+//                                "&end=" + formattedEnd;
+//
+//
+//                        setTimeout(() => {
+//                            window.location.href =
+//                                    "/paymentPage?detail_id=" + detail_id +
+//                                    "&grand=" + finalTotal +
+//                                    "&start=" + startDate +
+//                                    "&end=" + endDate;
+//                        }, 3000);
+//                        document.getElementById("reserveBtn").hidden = true;
+//                        document.getElementById("booking").hidden = false;
+//                    } else if (ans === "BOOKED") {
+//                        Swal.fire({
+//
+//                            icon: 'warning',
+//
+//                            title: 'Dates Already Booked',
+//
+//                            text: 'Selected dates are unavailable.',
+//
+//                            timer: 1600,
+//
+//                            showConfirmButton: false
+//
+//                        });
+//                    } else {
+//                        Swal.fire({
+//                            icon: 'error',
+//                            title: 'Booking Failed!',
+//
+//                            text: ans
+//                        });
+//                    }
+//                });
+//            });
+//        }
+
+        function showTotal() {
+            const detail_id = getPropertyId();
+
+            const startDate =
+                    document.getElementById("startDate").value;
+
+            const endDate =
+                    document.getElementById("endDate").value;
+
+            if (startDate === "" || endDate === "") {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Select Dates',
+                    text: 'Please select start and end dates',
+
+                    showConfirmButton: false
+                });
+                return;
+            }
+
+            const formattedStart = formatDate(startDate);
+            const formattedEnd = formatDate(endDate);
+
+            const formData = new FormData();
+
+            formData.append("detail_id", detail_id);
+            formData.append("startDate", formattedStart);
+            formData.append("endDate", formattedEnd);
+
+            fetch("checkAvailability", {
+
+                method: "POST",
+                body: formData
+
+            })
+                    .then(response => response.text())
+                    .then(ans => {
+
+                        if (ans === "BOOKED") {
+
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Dates Already Booked',
+                                text: 'Please select different dates.'
+                            });
+
+                        } else if (ans === "AVAILABLE") {
+
+                            calculateTotal();
+
+                        } else if (ans === "0") {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Login Required',
+                                text: 'Please login first'
+                            });
+                        }
+                    });
+        }
+
+        function calculateTotal() {
+
+            const startDate = document.getElementById("startDate").value;
+            const endDate = document.getElementById("endDate").value;
+
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            const diffTime = end.getTime() - start.getTime();
+
+            if (diffTime <= 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Invalid Dates',
+                    text: 'Please select dates carefully!',
+
+//                    showConfimButton: false,
+                    timer: 1600
+                });
+                return;
+            } else {
+
+                const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                let offerPrice =
+                        document.getElementById("newPrice")
+                        .innerText
+                        .replace("₹", "");
+
+                offerPrice = parseInt(offerPrice);
+
+                let total_price = days * offerPrice;
+
+                document.getElementById("bifercation").innerText =
+                        offerPrice + " X " + days;
+
+                document.getElementById("total_price").innerText =
+                        "₹" + total_price;
+
+                let cleaningFee = (2 * total_price) / 100;
+
+                document.getElementById("cleaning_label").innerText =
+                        "Cleaning Fees (2% of Total)";
+
+                document.getElementById("cleaning_fee").innerText =
+                        "₹" + cleaningFee;
+
+                let serviceFee = (2 * total_price) / 100;
+
+                document.getElementById("service_label").innerText =
+                        "Service Fees (2% of Total)";
+
+                document.getElementById("service_fee").innerText =
+                        "₹" + serviceFee;
+
+                const finalTotal =
+                        total_price + cleaningFee + serviceFee;
+
+                document.getElementById("final_total_label").innerText =
+                        "Total";
+
+                document.getElementById("final_total").innerText =
+                        "₹" + finalTotal;
+
+                document.getElementById("reserveBtn").hidden = true;
+
+                document.getElementById("booking").hidden = false;
+            }
+        }
+
+        function bookProperty() {
+            const detail_id = getPropertyId();
+
+            const startDate = document.getElementById("startDate").value;
+            const endDate = document.getElementById("endDate").value;
+
+            const finalTotal =
+                    document.getElementById("final_total")
+                    .innerText
+                    .replace("₹", "");
+
+            const formData = new FormData();
+
+            formData.append("detail_id", detail_id);
+            formData.append("total_price", finalTotal);
+            formData.append("startDate", startDate);
+            formData.append("endDate", endDate);
+
+            fetch("payment", {
+                method: "POST",
+                body: formData
+            })
+                    .then(response => response.text())
+                    .then(ans => {
+
+                        if (ans === "1") {
+
+                            const formattedStart = formatDate(startDate);
+                            const formattedEnd = formatDate(endDate);
+
+                            window.location.href =
+                                    "/paymentPage?detail_id=" + detail_id +
+                                    "&finalTotal=" + finalTotal +
+                                    "&start=" + formattedStart +
+                                    "&end=" + formattedEnd;
+
+                        } else if (ans === "BOOKED") {
+
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Dates Already Booked',
+                                text: 'Selected dates are unavailable.',
+                                showConfirmButton: false,
+                                timer: 1800
+                            });
+
+
+//                            } else if (ans === "0") {
+//
+//                                Swal.fire({
+//                                    icon: 'error',
+//                                    title: 'Login Required',
+//                                    text: 'Please login first',
+//                                    showConfirmButton: false,
+//                                    timer: 1800
+//                                });
+
+                        }
+                    });
+        }
+
+
+
+        function formatDate(dateString) {
+
+            const date = new Date(dateString);
+
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const year = date.getFullYear();
+
+            return `${month}/${day}/${year}`;
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            let today = new Date().toISOString().split("T")[0];
+
+            document.getElementById("startDate").min = today;
+            document.getElementById("endDate").min = today;
+
+        });
+
+        function confirmUserLogout(event) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: 'Are you Sure?',
+                text: 'You want to logout?',
+                icon: 'warning',
+
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                confirmButtonColor: '#ff385c',
+
+                customClass: {
+                    confirmButton: 'custom-swal-btn',
+                    cancelButton: 'custom-cancel-btn'
+                }
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/UserLogout";
+                }
+            });
+            return false;
+        }
+
+        function owner_name() {
+            const id = getPropertyId();
+
+            const url = `showOwnerName?id=${id}`;
+            fetch(url).then(response => response.text()).then(ans => {
+                const data = JSON.parse(ans).ans;
+                console.log("Owner Name ------------------> ", data[0].name);
+
+                document.getElementById("owner_name").innerText = data[0].name;
+            });
+
+        }
+
+    </script>
+</head>
+<body onload="showlocation();
+        showpropertyname();
+        showPropertyPrice();
+        showMap();
+        showPropertyPhotos();
+        owner_name();">
+    <div th:replace="~{user_fragments :: user_header}"></div>
+
+    <div class="main-container">
+
+        <!-- TITLE -->
+        <h1 class="property-title" id="propertyname"></h1>
+
+        <div class="d-flex gap-3 align-items-center property-subtitle mt-2">
+            <span class="review-badge">
+                <i class="bi bi-star-fill"></i> 4.86
+            </span>
+
+            <span>78 reviews</span>
+
+            <span>·</span>
+
+            <span id="location"></span>
+        </div>
+
+        <!-- GALLERY -->
+
+        <div class="row gallery">
+
+            <div class="col-md-6 main-image">
+                <img id="img1">
+            </div>
+
+            <div class="col-md-6 side-gallery" id="side-gallery">
+
+                <!--                <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop" class="top-right">
+                
+                                <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=1200&auto=format&fit=crop">
+                
+                                <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop">
+                
+                                <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop" class="bottom-right">-->
+
+                <!--                <img id="img2" class="top-right">
+                                <img id="img3">
+                                <img id="img4">
+                                <img id="img5" class="bottom-right">-->
+            </div>
+
+        </div>
+
+        <!-- CONTENT -->
+
+        <div class="row mt-5">
+
+            <!-- LEFT -->
+
+            <div class="col-lg-8">
+
+                <!-- HOST -->
+
+                <div class="host-section">
+
+                    <div class="d-flex align-items-center justify-content-between">
+
+                        <div>
+
+                            <h3>Entire villa hosted by <span id="owner_name"></span></h3>
+                            <p class="text-muted">
+                                6 guests · 3 bedrooms · 3 beds · 3 bathrooms
+                            </p>
+
+                        </div>
+
+                        <!--                        <img src="https://randomuser.me/api/portraits/men/32.jpg" class="host-img">-->
+
+                    </div>
+
+                </div>
+
+                <!-- FEATURES -->
+
+                <div class="feature-box">
+
+                    <i class="bi bi-wifi feature-icon"></i>
+
+                    <div>
+                        <div class="feature-title">Fast Wi-Fi</div>
+                        <div class="text-muted">High speed internet for work & streaming</div>
+                    </div>
+
+                </div>
+
+                <div class="feature-box">
+
+                    <i class="bi bi-water feature-icon"></i>
+
+                    <div>
+                        <div class="feature-title">Private Pool</div>
+                        <div class="text-muted">Relax in a luxurious private pool</div>
+                    </div>
+
+                </div>
+
+                <div class="feature-box">
+
+                    <i class="bi bi-car-front feature-icon"></i>
+
+                    <div>
+                        <div class="feature-title">Free Parking</div>
+                        <div class="text-muted">Safe & spacious parking area available</div>
+                    </div>
+
+                </div>
+
+                <!-- ABOUT -->
+
+                <div class="mt-5">
+
+                    <h3 class="section-title">About this place</h3>
+
+                    <p class="text-muted" id="desc">
+                        Experience luxury living in the heart of Ludhiana with this modern 3BHK villa featuring a private pool, elegant interiors, spacious bedrooms, smart TV, high-speed Wi-Fi, modular kitchen, and peaceful outdoor seating area.
+                    </p>
+
+                </div>
+
+                <!-- AMENITIES -->
+
+                <div class="amenities">
+
+                    <h3 class="section-title">What this place offers</h3>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <div class="amenity">
+                                <i class="bi bi-tv"></i>
+                                <span>Smart TV</span>
+                            </div>
+
+                            <div class="amenity">
+                                <i class="bi bi-snow"></i>
+                                <span>Air Conditioning</span>
+                            </div>
+
+                            <div class="amenity">
+                                <i class="bi bi-cup-hot"></i>
+                                <span>Kitchen</span>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <div class="amenity">
+                                <i class="bi bi-wifi"></i>
+                                <span>Wi-Fi</span>
+                            </div>
+
+                            <div class="amenity">
+                                <i class="bi bi-water"></i>
+                                <span>Private Pool</span>
+                            </div>
+
+                            <div class="amenity">
+                                <i class="bi bi-car-front"></i>
+                                <span>Parking</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- MAP -->
+
+                <div class="map-box" id="map-box">
+
+                </div>
+
+            </div>
+
+            <!-- RIGHT BOOKING CARD -->
+
+            <div class="col-lg-4">
+
+                <div class="booking-card">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div class="price">
+                            <label class="form-label old-price" id="oldPrice"></label>
+                            <label class="form-label new-price" id="newPrice"></label>
+                            <span style="font-size:16px;font-weight:400;">·</span>
+                            <span style="font-size:16px;font-weight:400;">night</span>
+                        </div>
+
+                        <div class="review-badge">
+                            <i class="bi bi-star-fill"></i> 4.86
+                        </div>
+
+                    </div>
+
+                    <div class="row mt-4">
+
+                        <div class="col-6">
+                            <label>Check-in</label>
+                            <input type="date" class="form-control" id="startDate">
+                        </div>
+
+                        <div class="col-6">
+                            <label>Checkout</label>
+                            <input type="date" class="form-control" id="endDate">
+                        </div>
+
+                    </div>
+
+                    <!--                    <div class="mt-3">
+                                            <label>Guests</label>
+                    
+                                            <select class="form-control">
+                                                <option>1 Guest</option>
+                                                <option>2 Guests</option>
+                                                <option>3 Guests</option>
+                                                <option>4 Guests</option>
+                                            </select>
+                                        </div>-->
+
+                    <div class="mt-4">
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span id="bifercation"></span>
+                            <span id="total_price"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span id="cleaning_label"></span>
+                            <span id="cleaning_fee"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span id="service_label"></span>
+                            <span id="service_fee"></span>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between fw-bold">
+                            <span id="final_total_label"></span>
+                            <span id="final_total"></span>
+                        </div>
+
+                    </div>
+
+                    <button class="reserve-btn" id="reserveBtn" onclick="showTotal()">
+                        Reserve
+                    </button>
+
+                    <button class="reserve-btn" id="booking" onclick="bookProperty()" hidden>
+                        Book Property
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="galleryModal" class="gallery-modal">
+
+        <span class="close-btn" onclick="closeGallery()">
+            &times;
+        </span>
+
+        <div class="gallery-content" id="gallery-content">
+
+        </div>
+
+    </div>
+
+    <div th:replace="~{user_fragments :: user_footer}"></div>
+
+    <div th:replace="~{user_fragments :: user_script}"></div>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Admin Home</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Link Fragment -->
+    <div th:replace="~{admin_fragments::admin_links}"></div>
+
+    <style>
+        .testimony-wrap {
+            min-height: 180px;   /* adjust 180–240px */
+            display: flex;
+            align-items: center;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .user-img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+        }
+
+        .testimony-wrap .text {
+            flex: 1;
+        }
+
+        .testimony-wrap p {
+            font-size: 14px;
+            line-height: 1.5;
+            max-height: 60px;
+            overflow: hidden;
+        }
+
+        .custom-swal-btn{
+            background:#ff385c !important;
+
+            color:white !important;
+
+            border:none !important;
+
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            width:160px;
+
+            height:55px;
+
+            border-radius:14px;
+
+            font-size:20px;
+
+            font-weight:600;
+
+            transition:0.3s;
+        }
+
+        .custom-swal-btn:hover{
+            background:#ff2d55 !important;
+
+            transform:scale(1.1);
+        }
+
+        .custom-swal-btn:active{
+            opacity: 0.5;
+        }
+
+        .custom-swal-btn:focus{
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            border:none !important;
+        }
+
+        .custom-cancel-btn{
+
+            background:#ff2d55 !important;
+
+            color:white !important;
+
+            border:none !important;
+
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            width:160px;
+
+            margin-left: 25px;
+
+            height:55px;
+
+            border-radius:14px;
+
+            font-size:18px;
+
+            font-weight:600;
+
+            margin-right:12px;
+
+            transition:0.3s;
+        }
+
+        .custom-cancel-btn:hover{
+            transform: scale(1.1);
+            background:#ff2d55 !important;
+            opacity: 0.3;
+        }
+    </style>
+
+    <script>
+        function confirmAdminLogout(event) {
+            event.preventDefault();
+            
+                Swal.fire({
+                    title: 'Are you Sure?',
+                    text: 'You want to logout?',
+                    icon: 'warning',
+
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    confirmButtonColor: '#ff385c',
+                    
+                    customClass: {
+                        confirmButton: 'custom-swal-btn',
+                        cancelButton: 'custom-cancel-btn'
+                    }
+                    
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/AdminLogout";
+                    }
+                });
+                return false;
+            }
+    </script>
+</head>
+<body>
+
+    <!-- Header Fragment -->
+    <div th:replace="~{admin_fragments::admin_header}"></div>
+    <!-- END nav -->
+
+
+
+
+    <section class="ftco-section testimony-section bg-light">
+        <div class="container">
+            <div class="row justify-content-center pb-5 mb-3">
+                <div class="col-md-7 heading-section text-center ftco-animate">
+                    <h2>Admin Panel</h2>
+                </div>
+            </div>
+            <div class="row ftco-animate">
+                <div class="col-md-12">
+                    <div class="carousel-testimony owl-carousel">
+                        <div class="item">
+                            <div class="testimony-wrap d-flex">
+                                <div class="user-img" style="background-image: url(images/ManageCities.png)"></div>
+                                <div class="text pl-4">
+                                    <span class="quote d-flex align-items-center justify-content-center">
+                                        <i class="fa fa-quote-left"></i>
+                                    </span>
+                                    <p>Efficiently manage city listings, update location data, and maintain consistency across your platform.</p>
+                                    <a href="AdminManageCities"><p class="name">Manage Cities</p></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="testimony-wrap d-flex">
+                                <div class="user-img" style="background-image: url(images/ManageProperties.jpg)">
+                                </div>
+                                <div class="text pl-4">
+                                    <span class="quote d-flex align-items-center justify-content-center">
+                                        <i class="fa fa-quote-left"></i>
+                                    </span>
+                                    <p>Streamline property management by organizing listings, updating information, and maintaining consistency across your platform.</p>
+                                    <a href="AdminManageProperties"><p class="name">Manage Properties</p></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="testimony-wrap d-flex">
+                                <div class="user-img" style="background-image: url(images/person_3.jpg)">
+                                </div>
+                                <div class="text pl-4">
+                                    <span class="quote d-flex align-items-center justify-content-center">
+                                        <i class="fa fa-quote-left"></i>
+                                    </span>
+                                    <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                                    <a href="AdminManageOwner"><p class="name">Admin Manage Owners</p></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{admin_fragments::admin_footer}"></div>
+
+    <!-- loader -->
+    <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+    <!-- Script Fragment -->
+    <div th:replace="~{admin_fragments::admin_script}"></div>
+
+</body>
+</html>

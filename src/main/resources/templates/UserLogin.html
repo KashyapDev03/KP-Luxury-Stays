@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>User Login</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <style>
+            .pink-underline {
+                color: #f0657d;
+                text-decoration: none;
+                position: relative;
+                font-weight: 500;
+            }
+
+            .pink-underline::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                bottom: -2px;
+                width: 100%;
+                height: 2px;
+                background-color: #f0657d;
+                transform: scaleX(0);
+                transition: transform 0.3s ease;
+            }
+
+            .pink-underline:hover::after {
+                transform: scaleX(1);
+            }
+
+            .contact-wrap {
+                border-radius: 25px;
+            }
+
+            .custom-swal-btn{
+                background:#ff385c !important;
+
+                color:white !important;
+
+                border:none !important;
+
+                outline:none !important;
+
+                box-shadow:none !important;
+
+                width:160px;
+
+                height:55px;
+
+                border-radius:14px;
+
+                font-size:20px;
+
+                font-weight:600;
+
+                transition:0.3s;
+            }
+
+            .custom-swal-btn:hover{
+                background:#ff2d55 !important;
+
+                transform:scale(1.1);
+            }
+
+            .custom-swal-btn:active{
+                opacity: 0.5;
+            }
+
+            .custom-swal-btn:focus{
+                outline:none !important;
+
+                box-shadow:none !important;
+
+                border:none !important;
+            }
+
+            .custom-cancel-btn{
+
+                background:#ff2d55 !important;
+
+                color:white !important;
+
+                border:none !important;
+
+                outline:none !important;
+
+                box-shadow:none !important;
+
+                width:160px;
+
+                margin-left: 25px;
+
+                height:55px;
+
+                border-radius:14px;
+
+                font-size:18px;
+
+                font-weight:600;
+
+                margin-right:12px;
+
+                transition:0.3s;
+            }
+
+            .custom-cancel-btn:hover{
+                transform: scale(1.1);
+                background:#ff2d55 !important;
+                opacity: 0.3;
+            }
+        </style>
+
+        <script>
+            function login() {
+
+                const email = document.getElementById("email").value;
+                const pass = document.getElementById("pass").value;
+//                const cpass = document.getElementById("cpass").value;
+
+
+                if (email === "" || pass === "") {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Incomplete Details!',
+                        text: 'Please fill all the details!',
+
+                        confirmButtonText: 'okay',
+                        confirmButtonColor: '#ff385c',
+
+                        customClass: {
+                            confirmButton: 'custom-swal-btn'
+                        },
+
+                        buttonStyling: false
+
+                    });
+                } else {
+
+                    const formData = new FormData();
+
+                    formData.append("email", email);
+                    formData.append("pass", pass);
+
+                    const url = `Login`;
+
+                    fetch(url, {method: "POST", body: formData})
+                            .then(response => response.text())
+                            .then(ans => renderHTML(ans));
+                }
+            }
+
+            function renderHTML(ans) {
+                console.log(ans);
+
+                if (ans === "0") {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Login Successfull!',
+                        text: 'Welcome to KP Luxury Stays',
+                        confirmButtonColor: '#ff385c',
+
+                        customClass: {
+                            confirmButton: 'custom-swal-btn'
+                        },
+
+                        buttonStyling: false
+                    }).then(() => {
+                        window.location.href = "/";
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Wrong Email Id or Password!',
+
+                        timer: 1600,
+
+                        showConfirmButton: false
+                    });
+                }
+            }
+        </script>
+
+    <div th:replace="~{user_fragments :: user_links}"></div>
+</head>
+<body>
+
+    <div th:replace="~{user_fragments :: user_header}"></div>
+
+    <section class="hero-wrap hero-wrap-2" style="background-image: url('images/bg_2.jpg');" data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text align-items-center justify-content-center">
+                <div class="col-md-9 ftco-animate text-center">
+                    <p class="breadcrumbs mb-2"><span class="mr-2"><a href="index.html">Home <i class="fa fa-chevron-right"></i></a></span> <span>Contact <i class="fa fa-chevron-right"></i></span></p>
+                    <h1 class="mb-0 bread">Welcome to KP Luxury Stay</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="ftco-section bg-light">
+
+        <div class="col-md-12">
+            <div class="wrapper">
+                <div class="row no-gutters justify-content-center">
+                    <div class="col-lg-8 col-md-7 d-flex align-items-stretch">
+                        <div class="contact-wrap w-100 p-md-5 p-4">
+                            <h3 class="mb-4">User Login</h3>
+                            <div id="form-message-warning" class="mb-4"></div> 
+                            <div id="form-message-success" class="mb-4">
+                                Secure Login for Users
+                            </div>
+                            <form class="contactForm">
+                                <div class="row">
+                                    <div class="col-md-6"> 
+                                        <div class="form-group">
+                                            <label class="label" for="email">Email Address</label>
+                                            <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="label" for="pass">Password</label>
+                                            <input type="password" class="form-control" name="pass" id="pass" placeholder="Enter your password">
+                                        </div>
+                                    </div>
+                                    <!--                                    <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label class="label" for="cpass">Confirm Password</label>
+                                                                                <input type="password" class="form-control" name="cpass" id="cpass" placeholder="Enter your password">
+                                                                            </div>
+                                                                        </div>                                    -->
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <input type="button" value="Login" class="btn btn-primary w-50" onclick="login()">
+                                            <div class="submitting"></div>
+                                        </div>
+                                    </div>
+
+<!--                                    <div class="col-md-6">
+                                        <div class="form-check mb-3">
+                                            <input type="checkbox" id="rememberMe" class="form-check-input">
+                                            <label for="rememberMe" class="form-check-label">Remember Me</label>
+                                            <div class="submitting"></div>
+                                        </div>
+                                    </div>-->
+
+                                    <div class="m-3">
+                                        <h3 id="div1"></h3>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+
+<div th:replace="~{user_fragments :: user_footer}"></div>
+
+<div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+
+<div th:replace="~{user_fragments :: user_script}"></div>
+
+<script th:if="${msg != null}">
+    Swal.fire({
+        icon: 'warning',
+        title: 'Access Denied!',
+        text: '[[${msg}]]',
+
+        confirmButtonColor: '#ff385c',
+
+        customClass: {
+            confirmButton: 'custom-swal-btn',
+            cancelButton: 'custom-cancel-btn'
+        }
+    });
+</script>
+</body>
+</html>

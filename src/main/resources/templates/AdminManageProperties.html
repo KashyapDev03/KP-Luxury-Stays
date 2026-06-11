@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Admin Manage Properties</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+        <!-- Link Fragment -->
+    <div th:replace="~{admin_fragments :: admin_links}"></div>
+
+    <style>
+        .img-link {
+            color: #f0657d;
+            cursor: pointer;
+            text-decoration: underline;
+            position: relative;
+        }
+
+        /* Hover preview */
+        .img-preview {
+            display: none;
+            position: absolute;
+            top: 25px;
+            left: 0;
+            width: 200px;
+            background: white;
+            padding: 5px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        .img-preview img {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        /* Show on hover */
+        .img-link:hover .img-preview {
+            display: block;
+        }
+
+        /* Modal */
+        .img-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(6px);
+            background: rgba(0,0,0,0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .img-modal img {
+            max-width: 70%;
+            border-radius: 10px;
+            animation: zoomIn 0.3s ease;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .custom-swal-btn{
+            background:#ff385c !important;
+
+            color:white !important;
+
+            border:none !important;
+
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            width:160px;
+
+            height:55px;
+
+            border-radius:14px;
+
+            font-size:20px;
+
+            font-weight:600;
+
+            transition:0.3s;
+        }
+
+        .custom-swal-btn:hover{
+            background:#ff2d55 !important;
+
+            transform:scale(1.1);
+        }
+
+        .custom-swal-btn:active{
+            opacity: 0.5;
+        }
+
+        .custom-swal-btn:focus{
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            border:none !important;
+        }
+
+        .custom-cancel-btn{
+
+            background:#ff2d55 !important;
+
+            color:white !important;
+
+            border:none !important;
+
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            width:160px;
+
+            margin-left: 25px;
+
+            height:55px;
+
+            border-radius:14px;
+
+            font-size:18px;
+
+            font-weight:600;
+
+            margin-right:12px;
+
+            transition:0.3s;
+        }
+
+        .custom-cancel-btn:hover{
+            transform: scale(1.1);
+            background:#ff2d55 !important;
+            opacity: 0.3;
+        }
+    </style>
+
+
+    <script>
+        function insertProperty() {
+            const propertyName = document.getElementById("pn").value;
+            const propertyDesc = document.getElementById("pd").value;
+            const propertyPic = document.getElementById("pp");
+            const pp = propertyPic.files.length > 0 ? propertyPic.files[0] : null;
+            if (propertyName === "" || propertyDesc === "" || pp === null) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Incomplete Details!',
+                    text: 'Please fill all the details properly!',
+
+                    confirmButtonText: 'Okay',
+
+                    confirmButtonColor: '#ff385c',
+
+                    customClass: {
+                        confirmButton: 'custom-swal-btn'
+                    }
+
+                });
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("pn", propertyName);
+            formData.append("pd", propertyDesc);
+            formData.append("pp", pp);
+            const url = "InsertProperty";
+            fetch(url, {method: "POST", body: formData})
+                    .then(response => response.text())
+                    .then(ans => renderHTML(ans));
+        }
+
+        function renderHTML(ans) {
+            if (ans === "0") {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Property already exists',
+
+                    confirmButtonColor: '#ff385c',
+
+                    customClass: {
+                        confirmButton: 'custom-swal-btn'
+                    }   
+                });
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Property Added Successfully!',
+
+                    confirmButtonColor: '#ff385c',
+
+                    customClass: {
+                        confirmButton: 'custom-swal-btn'
+                    }
+                }).then(() => {
+                    showData();
+                });
+
+            }
+        }
+
+        function showData() {
+            const url = "ShowProperty";
+            fetch(url)
+                    .then(response => response.text())
+                    .then(ans => renderHTML2(ans));
+        }
+
+        function renderHTML2(ans) {
+            console.log(ans);
+            const data = JSON.parse(ans);
+            const data2 = data.ans;
+            console.log(data2);
+            let s = "";
+            for (let i = 0; i < data2.length; i++) {
+                let obj = data2[i];
+                s += "<tr>";
+                s += "<td>" + obj.propertyname + "</td>";
+                s += "<td>" + obj.propertydesc + "</td>";
+                s += `<td>
+                        <span class="img-link" data-img="${obj.propertyphoto}">
+                            View Image
+                            <div class="img-preview">
+                                <img src="${obj.propertyphoto}">
+                            </div>
+                        </span>
+                    </td>`;
+                s += "<td>"
+                        + "<img src='/icons/edit.png' width='20' style='cursor:pointer;margin-right:10px;' onclick='editProperty(" + obj.propertyid + ")'>"
+                        + "<img src='/icons/delete.png' width='20' style='cursor:pointer;' onclick='deleteProperty(" + obj.propertyid + ")'>"
+                        + "</td>";
+                s += "</tr>";
+            }
+            document.getElementById("tbody").innerHTML = s;
+        }
+
+        function deleteProperty(id) {
+
+            Swal.fire({
+
+                title: 'Delete Property?',
+
+                text: 'This action cannot be undone.',
+
+                icon: 'warning',
+
+                showCancelButton: true,
+
+                confirmButtonText: 'Delete',
+
+                cancelButtonText: 'Cancel',
+
+                customClass: {
+                    confirmButton: 'custom-swal-btn',
+                    cancelButton: 'custom-cancel-btn'
+                },
+
+                focusConfirm: false
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    const url = `deleteProperty?id=${id}`;
+
+                    fetch(url)
+                            .then(response => response.text())
+                            .then(ans => {
+
+                                Swal.fire({
+
+                                    icon: 'success',
+
+                                    title: 'Deleted Successfully',
+
+                                    text: 'Property has been removed.',
+
+                                    timer: 1600,
+
+                                    showConfirmButton: false
+
+                                });
+
+                                showData();
+                            });
+                }
+            });
+        }
+
+        function editProperty(id) {
+            Swal.fire({
+
+                title: 'Update Property?',
+
+                text: 'Do you want to save these changes?',
+
+                icon: 'warning',
+
+                showCancelButton: true,
+
+                confirmButtonText: 'Update',
+
+                cancelButtonText: 'Cancel',
+
+                customClass: {
+                    confirmButton: 'custom-swal-btn',
+                    cancelButton: 'custom-cancel-btn'
+                },
+
+                focusConfirm: false
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    const propertyName = document.getElementById("pn").value;
+                    const propertyDesc = document.getElementById("pd").value;
+                    const propertyPic = document.getElementById("pp").files[0];
+                    const formData = new FormData();
+                    formData.append("pn", propertyName);
+                    formData.append("pd", propertyDesc);
+                    formData.append("pp", propertyPic);
+                    const url = `editProperty?id=${id}`;
+                    fetch(url, {method: "POST", body: formData})
+                            .then(response => response.text())
+                            .then(ans => {
+
+                                if (ans === "1") {
+                                    Swal.fire({
+
+                                        icon: 'success',
+
+                                        title: 'Updated Successfully!',
+
+                                        text: 'Property has been updated.',
+
+                                        timer: 1600,
+
+                                        showConfirmButton: false
+
+                                    }).then(() => {
+                                        showData();
+                                    });
+                                }
+                            });
+                }
+            });
+        }
+
+
+        //This is modal image popup code
+        document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("img-link")) {
+                const imgSrc = e.target.getAttribute("data-img");
+                document.getElementById("modalImg").src = imgSrc;
+                document.getElementById("imgModal").style.display = "flex";
+            }
+        });
+
+        function closeModal() {
+            document.getElementById("imgModal").style.display = "none";
+        }
+
+        function confirmAdminLogout(event) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: 'Are you Sure?',
+                text: 'You want to logout?',
+                icon: 'warning',
+
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                confirmButtonColor: '#ff385c',
+
+                customClass: {
+                    confirmButton: 'custom-swal-btn',
+                    cancelButton: 'custom-cancel-btn'
+                }
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/AdminLogout";
+                }
+            });
+            return false;
+        }
+    </script>
+
+</head>
+<body onload="showData()" >
+
+    <!-- Header Fragment -->
+    <div th:replace="~{admin_fragments::admin_header}"></div>
+    <!-- END nav -->
+
+    <div class="container">
+        <div class="row">
+            <div class="col-4 my-4">
+                <h3 style="text-align: center">Property Submit Form</h3>
+                <hr>
+
+                <form>
+                    <div class="mb-3">
+                        <label for="pn" class="form-label">Property Type</label>
+                        <input type="text" id="pn" class="form-control" placeholder="Enter Property Type">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="pd" class="form-label">Property Description</label>
+                        <textarea id="pd" class="form-control" placeholder="Enter Property Description"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="pp" class="form-label">Property Photo</label>
+                        <br>
+                        <input type="file" id="pp">
+                    </div>
+
+                    <input type="button" value="Add Property" class="btn btn-primary btn1 text-white w-100 my-1" onclick="insertProperty()">
+                    <!--<input type="button" value="Show Properties" class="btn btn-primary btn1 text-white w-100 my-1" onclick="showData()">-->
+                </form>
+            </div>
+
+            <div class="col-8 my-4">
+                <h3 style="text-align: center">Property Details</h3>
+                <hr>
+
+                <table class="table table-bordered table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Property Name</th>
+                            <th>Property Description</th>
+                            <th>Property Photo</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{admin_fragments::admin_footer}"></div>
+
+    <!-- loader -->
+    <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+    <!-- Script Fragment -->
+    <div th:replace="~{admin_fragments::admin_script}"></div>
+
+    <!--Modal Code for image popup-->
+
+    <div id="imgModal" class="img-modal" onclick="closeModal()">
+        <img id="modalImg">
+    </div>
+
+</body>
+</html>

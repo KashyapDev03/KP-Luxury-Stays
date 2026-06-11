@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Admin Manage Owners</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <style>
+            .custom-swal-btn{
+                background:#ff385c !important;
+
+                color:white !important;
+
+                border:none !important;
+
+                outline:none !important;
+
+                box-shadow:none !important;
+
+                width:160px;
+
+                height:55px;
+
+                border-radius:14px;
+
+                font-size:20px;
+
+                font-weight:600;
+
+                transition:0.3s;
+            }
+
+            .custom-swal-btn:hover{
+                background:#ff2d55 !important;
+
+                transform:scale(1.1);
+            }
+
+            .custom-swal-btn:active{
+                opacity: 0.5;
+            }
+
+            .custom-swal-btn:focus{
+                outline:none !important;
+
+                box-shadow:none !important;
+
+                border:none !important;
+            }
+
+            .custom-cancel-btn{
+
+                background:#ff2d55 !important;
+
+                color:white !important;
+
+                border:none !important;
+
+                outline:none !important;
+
+                box-shadow:none !important;
+
+                width:160px;
+
+                margin-left: 25px;
+
+                height:55px;
+
+                border-radius:14px;
+
+                font-size:18px;
+
+                font-weight:600;
+
+                margin-right:12px;
+
+                transition:0.3s;
+            }
+
+            .custom-cancel-btn:hover{
+                transform: scale(1.1);
+                background:#ff2d55 !important;
+                opacity: 0.3;
+            }
+        </style>
+
+        <script>
+            function showOwners() {
+                const url = `showOwners`;
+                fetch(url).then(response => response.text())
+                        .then(ans => {
+                            console.log(ans);
+                            const data = JSON.parse(ans).ans;
+
+                            let s = ``;
+
+                            for (let i = 0; i < data.length; i++) {
+                                const obj = data[i];
+
+                                s += `
+                                      <tr>
+                                          <td>${obj.name}</td>
+                                          <td>${obj.email}</td>
+                                          <td>${obj.city}</td>
+                                          <td>${obj.contact}</td>
+                                          <td>${obj.status}</td>
+                                          <td>
+                                            <button class="btn btn-sm m-1 ${obj.status.toLowerCase() === 'active' ? 'btn-success' : 'btn-secondary'}"
+                                                onclick="changeStatus('${obj.email}', 'Active')"> Active </button>
+                                            <button class="btn btn-sm m-1 ${obj.status.toLowerCase() === 'pending' ? 'btn-warning' : 'btn-secondary'}"
+                                                onclick="changeStatus('${obj.email}', 'Pending')"> Pending </button>
+                                          </td>
+                                      </tr>`;
+                            }
+                            document.getElementById("tbody").innerHTML = s;
+                        });
+            }
+
+            function changeStatus(email, status) {
+                const url = `changeStatus?email=${email}&status=${status}`;
+
+                fetch(url).then(response => response.text()).then(ans => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Status Updated',
+                        timer: 1600,
+
+                        showConfirmButton: false
+                    }).then(() => {
+                        showOwners();
+                    });
+                });
+            }
+
+            function confirmAdminLogout(event) {
+                event.preventDefault();
+                
+                Swal.fire({
+                    title: 'Are you Sure?',
+                    text: 'You want to logout?',
+                    icon: 'warning',
+
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    confirmButtonColor: '#ff385c',
+                    
+                    customClass: {
+                        confirmButton: 'custom-swal-btn',
+                        cancelButton: 'custom-cancel-btn'
+                    }
+                    
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/AdminLogout";
+                    }
+                });
+                return false;
+            }
+        </script>
+    <div th:replace="~{admin_fragments :: admin_links}"></div>
+</head>
+<body onload="showOwners()">
+    <div th:replace="~{admin_fragments :: admin_header}"></div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-6">
+                <table class="table table-bordered my-5">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Owner Name</th>
+                            <th>Owner Email</th>
+                            <th>City</th>
+                            <th>Contact</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{admin_fragments :: admin_footer}"></div>
+
+    <div th:replace="~{admin_fragments :: admin_script}"></div>
+</body>
+</html>

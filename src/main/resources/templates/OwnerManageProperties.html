@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Owner Manage Properties</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+        <!-- Link Fragment -->
+    <div th:replace="~{owner_fragments :: owner_links}"></div>
+
+    <style>
+        .contact-wrap {
+            border-radius: 25px;
+        }
+        .img-link {
+            color: #f0657d;
+            cursor: pointer;
+            text-decoration: underline;
+            position: relative;
+        }
+
+        /* Hover preview */
+        .img-preview {
+            display: none;
+            position: absolute;
+            top: 25px;
+            left: 0;
+            width: 200px;
+            background: white;
+            padding: 5px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        .img-preview img {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        /* Show on hover */
+        .img-link:hover .img-preview {
+            display: block;
+        }
+
+        /* Modal */
+        .img-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(6px);
+            background: rgba(0,0,0,0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .img-modal img {
+            max-width: 70%;
+            border-radius: 10px;
+            animation: zoomIn 0.3s ease;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .custom-select {
+            height: 52px;
+            border-radius: 12px;
+            border: 1.5px solid #e5e7eb;
+            padding: 0 14px;
+            font-size: 15px;
+            background-color: #fff;
+            transition: all 0.25s ease;
+        }
+
+        .custom-select:focus {
+            border-color: #f0657d;
+            box-shadow: 0 0 0 0.2rem rgba(240, 101, 125, 0.15);
+        }
+
+        .custom-select:hover {
+            border-color: #d1d5db;
+        }
+
+        .custom-swal-btn{
+            background:#ff385c !important;
+
+            color:white !important;
+
+            border:none !important;
+
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            width:160px;
+
+            height:55px;
+
+            border-radius:14px;
+
+            font-size:20px;
+
+            font-weight:600;
+
+            transition:0.3s;
+        }
+
+        .custom-swal-btn:hover{
+            background:#ff2d55 !important;
+
+            transform:scale(1.1);
+        }
+
+        .custom-swal-btn:active{
+            opacity: 0.5;
+        }
+
+        .custom-swal-btn:focus{
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            border:none !important;
+        }
+
+        .custom-cancel-btn{
+
+            background:#ff2d55 !important;
+
+            color:white !important;
+
+            border:none !important;
+
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            width:160px;
+
+            margin-left: 25px;
+
+            height:55px;
+
+            border-radius:14px;
+
+            font-size:18px;
+
+            font-weight:600;
+
+            margin-right:12px;
+
+            transition:0.3s;
+        }
+
+        .custom-cancel-btn:hover{
+            transform: scale(1.1);
+            background:#ff2d55 !important;
+            opacity: 0.3;
+        }
+    </style>
+
+
+    <script>
+        function insertProperty() {
+//            const oemail = document.getElementById("oemail").value;
+            const pt = document.getElementById("pt").value;
+            const city = document.getElementById("city").value;
+            const price = document.getElementById("price").value;
+            const op = document.getElementById("op").value;
+            const desc = document.getElementById("desc").value;
+            const add = document.getElementById("add").value;
+            const pn = document.getElementById("pn").value;
+            const pp = document.getElementById("pp").files[0];
+            const status = document.getElementById("status").value;
+            const latitude = document.getElementById("latitude").value;
+            const longitude = document.getElementById("longitude").value;
+
+            if (pt === "" || price === "" || op === "" || desc === "" || add === "" || pn === "" || !pp || status === "" || longitude === "" || latitude === "") {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Incomplete Details!',
+                    text: 'Please fill all the details properly!',
+
+                    confirmButtonText: 'Okay',
+
+                    confirmButtonColor: '#ff385c',
+
+                    customClass: {
+                        confirmButton: 'custom-swal-btn'
+                    },
+
+                    buttonStyling: false
+                });
+
+                return;
+            }
+
+            const formData = new FormData();
+//            formData.append("oemail", oemail);
+            formData.append("pt", pt);
+            formData.append("city", city);
+            formData.append("price", price);
+            formData.append("op", op);
+            formData.append("desc", desc);
+            formData.append("add", add);
+            formData.append("pn", pn);
+            formData.append("pp", pp);
+            formData.append("status", status);
+            formData.append("latitude", latitude);
+            formData.append("longitude", longitude);
+
+            const url = "InsertProperty1";
+            fetch(url, {method: "POST", body: formData})
+                    .then(response => response.text())
+                    .then(ans => renderHTML(ans));
+        }
+
+        function renderHTML(ans) {
+            if (ans === "0") {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'The Property you are trying to enter already exists!',
+
+                    confirmButtonColor: '#ff385c',
+
+                    customClass: {
+                        confirmButton: 'custom-swal-btn'
+                    },
+
+                    buttonStyling: false
+                });
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Property Added Successfully!',
+
+                    confirmButtonColor: '#ff385c',
+
+                    customClass: {
+                        confirmButton: 'custom-swal-btn'
+                    },
+
+                    buttonStyling: false
+                }).then(() => {
+                    showData();
+                });
+            }
+        }
+
+        function showData() {
+            const url = "ShowProperty1";
+            fetch(url)
+                    .then(response => response.text())
+                    .then(ans => renderHTML2(ans));
+        }
+
+        function renderHTML2(ans) {
+            console.log(ans);
+            const data = JSON.parse(ans);
+            const data2 = data.ans;
+            console.log(data2);
+            let s = "";
+
+            if (data2.length === 0) {
+
+                s += `
+                    <tr>
+                        <td colspan="13" class="text-center fw-bold">
+                            <h3 class="heading">No Properties Available</h3>
+                        </td>
+                    </tr>
+                    `;
+            } else {
+                for (let i = 0; i < data2.length; i++) {
+                    let obj = data2[i];
+                    s += "<tr>";
+                    s += "<td>" + obj.owner_email + "</td>";
+                    s += "<td>" + obj.property_type + "</td>";
+                    s += "<td>" + obj.city + ", " + obj.statename + ", " + obj.countryname + "</td>";
+                    s += "<td>" + obj.price + "</td>";
+                    s += "<td>" + obj.offer_price + "</td>";
+                    s += "<td>" + obj.description + "</td>";
+
+                    s += "<td>" + obj.address + "</td>";
+                    s += "<td>" + obj.property_name + "</td>";
+                    s += `<td>
+                        <span class="img-link" data-img="${obj.photo}">
+                            View Image
+                            <div class="img-preview">
+                                <img src="${obj.photo}">
+                                
+                            </div>
+                        </span>
+            <i class='bi bi-plus' style="cursor: pointer;" onclick="addPhotos(${obj.id})"></i>
+                    </td>`;
+                    s += "<td>" + obj.status + "</td>";
+                    s += "<td>" + obj.latitude + "</td>";
+                    s += "<td>" + obj.longitude + "</td>";
+                    s += "<td>"
+                            + "<img src='/icons/edit.png' width='20' style='cursor:pointer;margin-right:10px;' onclick='editProperty(" + obj.id + ")'>"
+                            + "<img src='/icons/delete.png' width='20' style='cursor:pointer;' onclick='deleteProperty(" + obj.id + ")'>"
+                            + "</td>";
+                    s += "</tr>";
+                }
+            }
+            document.getElementById("tbody").innerHTML = s;
+        }
+
+        function deleteProperty(id) {
+
+            Swal.fire({
+
+                title: 'Delete Property?',
+
+                text: 'This action cannot be undone.',
+
+                icon: 'warning',
+
+                showCancelButton: true,
+
+                confirmButtonText: 'Delete',
+
+                cancelButtonText: 'Cancel',
+
+                customClass: {
+                    confirmButton: 'custom-swal-btn',
+                    cancelButton: 'custom-cancel-btn'
+                },
+
+                buttonsStyling: false,
+
+                focusConfirm: false
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    const url = `deleteProperty1?id=${id}`;
+
+                    fetch(url)
+                            .then(response => response.text())
+                            .then(ans => {
+
+                                if (ans === "1") {
+                                    Swal.fire({
+
+                                        icon: 'success',
+
+                                        title: 'Deleted Successfully',
+
+                                        text: 'Property has been removed.',
+
+                                        timer: 1600,
+
+                                        showConfirmButton: false
+
+                                    });
+
+                                    showData();
+                                }
+
+                            });
+                }
+            });
+        }
+
+//        function deleteProperty(id) {
+//            if (!confirm("Do you want to delete this property?"))
+//                return;
+//            const url = `deleteProperty1?id=${id}`;
+//            fetch(url)
+//                    .then(response => response.text())
+//                    .then(ans =>
+//                    {
+//                        alert("Property Deleted Successfully!");
+//                        showData();
+//                    });
+//        }
+
+        function editProperty(id) {
+            Swal.fire({
+
+                title: 'Update Property?',
+
+                text: 'Do you want to save these changes?',
+
+                icon: 'warning',
+
+                showCancelButton: true,
+
+                confirmButtonText: 'Update',
+
+                cancelButtonText: 'Cancel',
+
+                customClass: {
+                    confirmButton: 'custom-swal-btn',
+                    cancelButton: 'custom-cancel-btn'
+                },
+
+                buttonsStyling: false,
+
+                focusConfirm: false
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    const pt = document.getElementById("pt").value;
+                    const city = document.getElementById("city").value;
+                    const price = document.getElementById("price").value;
+                    const op = document.getElementById("op").value;
+                    const desc = document.getElementById("desc").value;
+                    const add = document.getElementById("add").value;
+                    const pn = document.getElementById("pn").value;
+                    const pp = document.getElementById("pp").files[0];
+                    const status = document.getElementById("status").value;
+                    const longitude = document.getElementById("longitude").value;
+                    const latitude = document.getElementById("latitude").value;
+
+
+                    const formData = new FormData();
+//            formData.append("oemail", oemail);
+                    formData.append("pt", pt);
+                    formData.append("city", city);
+                    formData.append("price", price);
+                    formData.append("op", op);
+                    formData.append("desc", desc);
+                    formData.append("add", add);
+                    formData.append("pn", pn);
+                    formData.append("pp", pp);
+                    formData.append("status", status);
+                    formData.append("longitude", longitude);
+                    formData.append("latitude", latitude);
+
+                    const url = `editProperty1?id=${id}`;
+                    fetch(url, {method: "POST", body: formData})
+                            .then(response => response.text())
+                            .then(ans => {
+                                if (ans === "1") {
+                                    Swal.fire({
+
+                                        icon: 'success',
+
+                                        title: 'Updated Successfully!',
+
+                                        text: 'Property has been updated.',
+
+                                        timer: 1600,
+
+                                        showConfirmButton: false
+
+                                    }).then(() => {
+                                        showData();
+                                    });
+                                }
+                            });
+                }
+            });
+        }
+
+//        function editProperty(id) {
+//            if (!confirm("Do you want to update the property?"))
+//                return;
+////            const oemail = document.getElementById("oemail").value;
+//            const pt = document.getElementById("pt").value;
+//            const city = document.getElementById("city").value;
+//            const price = document.getElementById("price").value;
+//            const op = document.getElementById("op").value;
+//            const desc = document.getElementById("desc").value;
+//            const add = document.getElementById("add").value;
+//            const pn = document.getElementById("pn").value;
+//            const pp = document.getElementById("pp").files[0];
+//            const status = document.getElementById("status").value;
+//            const longitude = document.getElementById("longitude").value;
+//            const latitude = document.getElementById("latitude").value;
+//
+//
+//            const formData = new FormData();
+////            formData.append("oemail", oemail);
+//            formData.append("pt", pt);
+//            formData.append("city", city);
+//            formData.append("price", price);
+//            formData.append("op", op);
+//            formData.append("desc", desc);
+//            formData.append("add", add);
+//            formData.append("pn", pn);
+//            formData.append("pp", pp);
+//            formData.append("status", status);
+//            formData.append("longitude", longitude);
+//            formData.append("latitude", latitude);
+//
+//            const url = `editProperty1?id=${id}`;
+//            fetch(url, {method: "POST", body: formData})
+//                    .then(response => response.text())
+//                    .then(ans => renderHTML(ans));
+//        }
+
+
+        //This is modal image popup code
+        document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("img-link")) {
+                const imgSrc = e.target.getAttribute("data-img");
+                document.getElementById("modalImg").src = imgSrc;
+                document.getElementById("imgModal").style.display = "flex";
+            }
+        });
+
+        function closeModal() {
+            document.getElementById("imgModal").style.display = "none";
+        }
+
+        function loadCities() {
+
+            fetch("getCities")
+                    .then(res => res.text())
+                    .then(ans => {
+
+                        const data = JSON.parse(ans).ans;
+
+                        let html = "<option value=''>Select City</option>";
+
+                        for (let i = 0; i < data.length; i++) {
+                            html += `<option value="${data[i].cityid}">
+                            ${data[i].cityname}, ${data[i].statename}, ${data[i].countryname}
+                         </option>`;
+                        }
+
+                        document.getElementById("city").innerHTML = html;
+                    });
+        }
+
+        function loadProperties() {
+
+            fetch("getProperties")
+                    .then(res => res.text())
+                    .then(ans => {
+
+                        const data = JSON.parse(ans).ans;
+
+                        let html = "<option value=''>Select Property</option>";
+
+                        for (let i = 0; i < data.length; i++) {
+                            html += `<option value="${data[i].propertyid}">
+                            ${data[i].propertyname}
+                         </option>`;
+                        }
+
+                        document.getElementById("pt").innerHTML = html;
+                    });
+        }
+
+//        function loadOwnerEmail() {
+//            fetch("getOwnerEmail")
+//                    .then(res => res.text())
+//                    .then(email => {
+//                        document.getElementById("oemail").value = email;
+//                    });
+//        }
+
+        function addPhotos(id) {
+//            const id = getId();
+            window.location.href = `AddPhotosforProperties?id=${id}`;
+        }
+
+        function confirmOwnerLogout(event) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: 'Are you Sure?',
+                text: 'You want to logout?',
+                icon: 'warning',
+
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                confirmButtonColor: '#ff385c',
+
+                customClass: {
+                    confirmButton: 'custom-swal-btn',
+                    cancelButton: 'custom-cancel-btn'
+                }
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/PropertyOwnerLogout";
+                }
+            });
+            return false;
+        }
+    </script>
+</script>
+</head>
+<body onload="showData();
+        loadCities();
+        loadProperties()" >
+
+    <!-- Header Fragment -->
+    <div th:replace="~{owner_fragments::owner_header}"></div>
+    <!-- END nav -->
+
+    <section class="ftco-section bg-light">
+
+        <div class="col-md-12">
+            <div class="wrapper">
+                <div class="row no-gutters justify-content-center">
+                    <div class="col-lg-8 col-md-7 d-flex align-items-stretch">
+                        <div class="contact-wrap w-100 p-md-5 p-4">
+                            <h3 style="text-align: center">Property Submit Form</h3>
+                            <hr>
+                            <div id="form-message-warning" class="mb-4"></div> 
+                            <form class="contactForm">
+                                <div class="row">
+                                    <!--                                    <div class="col-md-6">
+                                                                            <div class="mb-3">
+                                                                                <label for="oemail" class="form-label">Owner Email</label>
+                                                                                <input id="oemail" type="email" class="form-control" readonly/>
+                                                                            </div>
+                                                                        </div>-->
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="pt" class="form-label fw-semibold">Property Type</label>
+                                            <br>
+                                            <select id="pt" class="form-select custom-select">
+
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="city" class="form-label">City</label>
+                                            <br>
+                                            <select id="city" class="form-select custom-select">
+
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="price" class="form-label">Price</label>
+                                            <br>
+                                            <input type="number" id="price" class="form-control" placeholder="Enter property's price">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="op" class="form-label">Offer Price</label>
+                                            <br>
+                                            <input type="number" id="op" class="form-control" placeholder="Enter property's offer price">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="desc" class="form-label">Description</label>
+                                            <br>
+                                            <input type="text" id="desc" class="form-control" placeholder="Enter property's description">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="add" class="form-label">Address</label>
+                                            <br>
+                                            <input type="text" id="add" class="form-control" placeholder="Enter property's address">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="pn" class="form-label">Property Name</label>
+                                            <input type="text" id="pn" class="form-control" placeholder="Enter property's name">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="pp" class="form-label">Property Photo</label>
+                                            <br>
+                                            <input type="file" id="pp" class="form-control">
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="status" class="form-label">Status</label>
+                                            <br>
+                                            <input type="text" id="status" class="form-control" placeholder="Enter property's status">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="latitude" class="form-label">Latitude</label>
+                                            <br>
+                                            <input type="number" id="latitude" class="form-control" placeholder="Enter property's latitude">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label for="longitude" class="form-label">Longitude</label>
+                                            <br>
+                                            <input type="number" id="longitude" class="form-control" placeholder="Enter property's longitude">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <input type="button" value="Add Property" class="btn btn-primary btn1 text-white w-100 my-1" onclick="insertProperty()">
+                                    </div>
+
+                                    <!--                                    <div class="col-md-6">
+                                                                            <input type="button" value="Show Properties" class="btn btn-primary btn1 text-white w-100 my-1" onclick="showData()">
+                                                                        </div>-->
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12 my-4">
+                <h3 style="text-align: center">Property Details</h3>
+                <hr>
+
+                <table class="table table-bordered table-hover mb-5">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Owner Email</th>
+                            <th>Property Type</th>
+                            <th>City</th>
+                            <th>Price</th>
+                            <th>Offer Price</th>
+                            <th>Description</th>
+                            <th>Address</th>
+                            <th>Property Name</th>
+                            <th>Photo</th>
+                            <th>Status</th>
+                            <th>Latitude</th>
+                            <th>Longitude</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{owner_fragments::owner_footer}"></div>
+
+    <!-- loader -->
+    <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+    <!-- Script Fragment -->
+    <div th:replace="~{owner_fragments::owner_script}"></div>
+
+    <!--Modal Code for image popup-->
+
+    <div id="imgModal" class="img-modal" onclick="closeModal()">
+        <img id="modalImg">
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Owner Booking History</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <div th:replace="~{owner_fragments :: owner_links}"></div>
+
+    <script>
+        function loadBookingHistory() {
+            const url = `getOwnerBookingHistory`;
+            fetch(url).then(response => response.text()).then(ans => {
+                console.log(ans);
+                let data = JSON.parse(ans).ans;
+
+                let s = ``;
+
+                if (data.length === 0) {
+                    s += `
+                            <tr>
+                                <td colspan="7">
+                                    <h3 class="heading">No Booking History Found!</h3>
+                                </td>
+                            </tr>
+                            `;
+                }
+
+
+
+                for (let i = 0; i < data.length; i++) {
+                    let obj = data[i];
+                    s += `
+                            <tr>
+                                <td>${obj.id}</td>
+                                <td>${obj.user_email}</td>
+                                <td>${obj.total_price}</td>
+                                <td>${obj.payment_type}</td>
+                                <td>${obj.address}</td>
+                                <td>${obj.start_date}</td>
+                                <td>${obj.end_date}</td>
+                            </tr>
+                        `;
+                }
+
+                document.getElementById("tbody").innerHTML = s;
+            });
+        }
+
+        function confirmOwnerLogout(event) {
+            event.preventDefault();
+            
+            Swal.fire({
+                title: 'Are you Sure?',
+                text: 'You want to logout?',
+                icon: 'warning',
+
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                confirmButtonColor: '#ff385c',
+
+                customClass: {
+                    confirmButton: 'custom-swal-btn',
+                    cancelButton: 'custom-cancel-btn'
+                }
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/PropertyOwnerLogout";
+                }
+            });
+            return false;
+        }
+    </script>
+
+    <style>
+        .custom-swal-btn{
+            background:#ff385c !important;
+
+            color:white !important;
+
+            border:none !important;
+
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            width:160px;
+
+            height:55px;
+
+            border-radius:14px;
+
+            font-size:20px;
+
+            font-weight:600;
+
+            transition:0.3s;
+        }
+
+        .custom-swal-btn:hover{
+            background:#ff2d55 !important;
+
+            transform:scale(1.1);
+        }
+
+        .custom-swal-btn:active{
+            opacity: 0.5;
+        }
+
+        .custom-swal-btn:focus{
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            border:none !important;
+        }
+
+        .custom-cancel-btn{
+
+            background:#ff2d55 !important;
+
+            color:white !important;
+
+            border:none !important;
+
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            width:160px;
+
+            margin-left: 25px;
+
+            height:55px;
+
+            border-radius:14px;
+
+            font-size:18px;
+
+            font-weight:600;
+
+            margin-right:12px;
+
+            transition:0.3s;
+        }
+
+        .custom-cancel-btn:hover{
+            transform: scale(1.1);
+            background:#ff2d55 !important;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body onload="loadBookingHistory()">
+    <div th:replace="~{owner_fragments :: owner_header}"></div>
+
+    <div class="container">
+        <table class="table table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Booking Id</th>
+                    <th>User Email</th>
+                    <th>Total Price</th>
+                    <th>Payment Type</th>
+                    <th>Property Address</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+
+            </tbody>
+        </table>
+    </div>
+
+    <div th:replace="~{owner_fragments :: owner_footer}"></div>
+
+    <div th:replace="~{owner_fragments :: owner_script}"></div>
+</body>
+</html>

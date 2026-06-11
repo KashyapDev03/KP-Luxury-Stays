@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>City Properties</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <div th:replace="~{user_fragments :: user_links}"></div>
+
+    <script>
+
+        function getCityId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get("cityid");
+        }
+
+        function loadPropertiesByCity() {
+            const cityid = getCityId();
+            console.log("CITY ID -----------------> ", cityid);
+            const url = `getCityProperties?cityid=${cityid}`;
+
+            fetch(url)
+                    .then(response => response.text())
+                    .then(ans => {
+                        console.log(ans);
+                        const data = JSON.parse(ans).ans;
+
+                        if (data.length > 0) {
+                            document.getElementById("cityname").innerText = "Properties in " + data[0].cityname;
+                        }
+
+                        if (data.length === 0) {
+                            document.getElementById("cityname").innerText = "No Properties Found!";
+                        }
+                        let s = "";
+
+                        for (let i = 0; i < data.length; i++) {
+
+                            let p = data[i];
+
+                            s += `
+                                <div class="col-md-4">
+                                    <div class="city-card" onclick="propertyDetails(${p.id}, ${p.cityid})">
+
+                                        <div class="city-img">
+                                            <img src="${p.photo}">
+                                            <span class="badge-custom">Popular</span>
+                                            <i class="bi bi-heart heart-icon"></i>
+                                        </div>
+
+                                        <div class="city-body text-center">
+                                            <h5 class="fw-bold mt-3">${p.property_name}</h5>
+                                            <p class="text-muted small">₹${p.price}</p>
+                                            <p class="property-count">Available Listings</p>
+                                        </div>
+
+                                    </div>
+                                </div>`;
+                        }
+
+                        document.getElementById("propertyContainer").innerHTML = s;
+                    });
+        }
+
+        function propertyDetails(id, cityid) {
+            window.location.href = `PropertyDetails?id=${id}&cityid=${cityid}`;
+        }
+
+        function confirmUserLogout(event) {
+            event.preventDefault();
+            
+            Swal.fire({
+                title: 'Are you Sure?',
+                text: 'You want to logout?',
+                icon: 'warning',
+
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                confirmButtonColor: '#ff385c',
+
+                customClass: {
+                    confirmButton: 'custom-swal-btn',
+                    cancelButton: 'custom-cancel-btn'
+                }
+
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/UserLogout";
+                }
+            });
+            return false;
+        }
+    </script>
+
+    <style>
+        .city-section {
+            background: #f9fafc;
+        }
+
+        .city-card {
+            border-radius: 20px;
+            overflow: hidden;
+            background: #fff;
+            transition: 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .city-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .city-img {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .city-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .badge-custom {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: linear-gradient(45deg, #ff6a88, #ff99ac);
+            color: white;
+            padding: 5px 12px;
+            font-size: 12px;
+            border-radius: 20px;
+        }
+
+        .heart-icon {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: white;
+            padding: 6px;
+            border-radius: 50%;
+            font-size: 14px;
+        }
+
+        .city-body {
+            padding: 20px;
+        }
+
+        .icon-circle {
+            width: 55px;
+            height: 55px;
+            background: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: -35px auto 10px;
+            font-size: 20px;
+            color: #f0657d;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .property-count {
+            font-weight: 500;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .services-wrap{
+            border-radius: 25px !important;
+        }
+
+        .custom-swal-btn{
+            background:#ff385c !important;
+
+            color:white !important;
+
+            border:none !important;
+
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            width:160px;
+
+            height:55px;
+
+            border-radius:14px;
+
+            font-size:20px;
+
+            font-weight:600;
+
+            transition:0.3s;
+        }
+
+        .custom-swal-btn:hover{
+            background:#ff2d55 !important;
+
+            transform:scale(1.1);
+        }
+
+        .custom-swal-btn:active{
+            opacity: 0.5;
+        }
+
+        .custom-swal-btn:focus{
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            border:none !important;
+        }
+
+        .custom-cancel-btn{
+
+            background:#ff2d55 !important;
+
+            color:white !important;
+
+            border:none !important;
+
+            outline:none !important;
+
+            box-shadow:none !important;
+
+            width:160px;
+
+            margin-left: 25px;
+
+            height:55px;
+
+            border-radius:14px;
+
+            font-size:18px;
+
+            font-weight:600;
+
+            margin-right:12px;
+
+            transition:0.3s;
+        }
+
+        .custom-cancel-btn:hover{
+            transform: scale(1.1);
+            background:#ff2d55 !important;
+            opacity: 0.3;
+        }
+    </style>
+
+</head>
+<body onload="loadPropertiesByCity()">
+
+    <div th:replace="~{user_fragments :: user_header}"></div>
+
+
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 d-flex services align-self-stretch px-4 ftco-animate">
+                    <div class="d-block services-wrap text-center">
+                        <div class="media-body py-4 px-3">
+                            <h3 class="heading" id="cityname"></h3>
+                            <div class="row g-4 mt-5" id="propertyContainer"></div>
+                        </div>
+                    </div>      
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div th:replace="~{user_fragments :: user_footer}"></div>
+
+
+    <div th:replace="~{user_fragments :: user_script}"></div>
+</body>
+</html>
